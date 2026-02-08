@@ -81,6 +81,16 @@ Se mantienen los últimos 5 logs automáticamente.
 - Reinicia tu Mac después de la limpieza para asegurar estabilidad
 - Si usas `--disable-launchers`, los plists se mueven a `~/LaunchAgents.disabled` (puedes restaurarlos manualmente)
 
+## Por qué existe esto
+
+Varios amigos pagaban licencias anuales de CleanMyMac y apps similares que corren en segundo plano, consumen recursos y a veces causan más problemas de los que resuelven. La realidad es que todo lo que hacen esas apps se puede hacer desde la terminal con comandos nativos de macOS — sin instalar nada extra, sin procesos en background, sin suscripciones.
+
+Este script nació de esa idea: una alternativa gratuita, transparente y open source.
+
+## Autor
+
+Creado por [Axl Pierola](https://github.com/axlpierola)
+
 ## Licencia
 
 MIT
