@@ -29,6 +29,7 @@ MODE="dry"
 DISABLE_LAUNCHERS="no"
 SMART_CACHES="no"
 FLUSH_DNS="no"
+CLOSE_APPS="no"
 TOTAL_FREED=0
 
 # --- Funciones de ayuda ---
@@ -45,10 +46,11 @@ Opciones:
   --smart-caches       Solo borra caches de apps conocidas (recomendado)
   --disable-launchers  Mueve LaunchAgents de terceros a ~/LaunchAgents.disabled
   --flush-dns          Limpia la cache de DNS al finalizar
+  --close-apps         Cierra apps que generan caches antes de limpiar
   --help               Muestra esta ayuda
 
 Ejemplos:
-  ./mac_cleanup.sh --run --smart-caches
+  ./mac_cleanup.sh --run --smart-caches --close-apps
   ./mac_cleanup.sh --run --smart-caches --flush-dns
   ./mac_cleanup.sh --dry-run
 EOF
@@ -63,6 +65,7 @@ for arg in "$@"; do
     --disable-launchers) DISABLE_LAUNCHERS="yes" ;;
     --smart-caches) SMART_CACHES="yes" ;;
     --flush-dns) FLUSH_DNS="yes" ;;
+    --close-apps) CLOSE_APPS="yes" ;;
     --help|-h) show_help ;;
     *) echo -e "${RED}Argumento desconocido: $arg${NC}" >&2; echo "Usa --help para ver opciones." >&2; exit 2 ;;
   esac
@@ -145,10 +148,32 @@ chmod 600 "$LOG"
 echo "Iniciando Log: $LOG — $(date)" > "$LOG"
 say "mac_cleanup.sh — MODO: $MODE | Smart: $SMART_CACHES | DNS: $FLUSH_DNS" "$GREEN"
 
+# Cerrar apps que generan caches
+if [[ "$MODE" == "run" && "$CLOSE_APPS" == "yes" ]]; then
+  APPS_TO_CLOSE=(
+    "Google Chrome" "Safari" "Slack" "Spotify"
+    "Discord" "Microsoft Teams" "zoom.us"
+    "Visual Studio Code" "Webex"
+  )
+
+  header "Cerrando Apps"
+  for app in "${APPS_TO_CLOSE[@]}"; do
+    if pgrep -xq "$app" 2>/dev/null || osascript -e "tell application \"System Events\" to (name of processes) contains \"$app\"" 2>/dev/null | grep -q "true"; then
+      say "Cerrando $app..." "$YELLOW"
+      osascript -e "tell application \"$app\" to quit" 2>/dev/null || true
+    fi
+  done
+  say "Esperando 3 segundos para que las apps cierren..." "$YELLOW"
+  sleep 3
+fi
+
 # Advertencia antes de ejecutar
 if [[ "$MODE" == "run" ]]; then
-  say ""
-  say "⚠️  ATENCIÓN: Cierra Chrome, Safari, Slack y Spotify antes de continuar." "$YELLOW"
+  if [[ "$CLOSE_APPS" != "yes" ]]; then
+    say ""
+    say "⚠️  ATENCIÓN: Cierra Chrome, Safari, Slack y Spotify antes de continuar." "$YELLOW"
+    say "   (o usa --close-apps para cerrarlas automáticamente)" "$YELLOW"
+  fi
   say "   Iniciando limpieza en 5 segundos... (Ctrl+C para cancelar)" "$YELLOW"
   for i in 5 4 3 2 1; do echo -n "$i... "; sleep 1; done
   echo ""

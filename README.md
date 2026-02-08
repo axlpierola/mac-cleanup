@@ -33,6 +33,9 @@ chmod +x mac_cleanup.sh
 # Ejecutar limpieza (solo caches de apps conocidas)
 ./mac_cleanup.sh --run --smart-caches
 
+# Limpieza cerrando apps automáticamente (recomendado)
+./mac_cleanup.sh --run --smart-caches --close-apps
+
 # Limpieza + flush DNS
 ./mac_cleanup.sh --run --smart-caches --flush-dns
 
@@ -47,6 +50,7 @@ chmod +x mac_cleanup.sh
 | `--dry-run` | Simula la limpieza sin borrar nada (default) |
 | `--run` | Ejecuta la limpieza |
 | `--smart-caches` | Solo borra caches de apps conocidas (Adobe, Chrome, Slack, VS Code, etc.) |
+| `--close-apps` | Cierra apps que generan caches antes de limpiar (Chrome, Safari, Slack, etc.) |
 | `--flush-dns` | Limpia la cache DNS al finalizar |
 | `--disable-launchers` | Mueve LaunchAgents de terceros a `~/LaunchAgents.disabled` |
 | `--help` | Muestra la ayuda |
@@ -72,7 +76,7 @@ Se mantienen los últimos 5 logs automáticamente.
 
 ## Tips
 
-- Cierra Chrome, Safari, Slack y Spotify antes de ejecutar con `--run`
+- Usa `--close-apps` para que cierre Chrome, Safari, Slack, Spotify, Discord, Teams, Zoom, VS Code y Webex automáticamente (nunca cierra la terminal desde donde se ejecuta)
 - Usa `--dry-run` primero para revisar qué se va a borrar
 - Reinicia tu Mac después de la limpieza para asegurar estabilidad
 - Si usas `--disable-launchers`, los plists se mueven a `~/LaunchAgents.disabled` (puedes restaurarlos manualmente)
