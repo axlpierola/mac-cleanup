@@ -19,7 +19,7 @@ Sin esto, el script no podrá borrar la papelera ni algunos logs protegidos.
 ## Instalación
 
 ```bash
-git clone https://github.com/tu-usuario/mac-cleanup.git
+git clone https://github.com/axlpierola/mac-cleanup.git
 cd mac-cleanup
 chmod +x mac_cleanup.sh
 ```
